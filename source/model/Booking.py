@@ -8,4 +8,31 @@ class Booking:
         self._check_out_date = check_out_date
         self._is_cancelled = is_cancelled
         self._total_amount = total_amount
-        
+
+    @property
+    def booking_id(self):
+        return self._booking_id
+    
+    @property
+    def guest_id(self):
+        return self._guest_id
+    
+    @property
+    def room_id(self):
+        return self._room_id
+    
+    @property
+    def check_in_date(self):
+        return self._check_in_date
+    
+    @property
+    def check_out_date(self):
+        return self._check_out_date
+    
+    @property
+    def is_cancelled(self):
+        return self._is_cancelled
+    
+    @property
+    def total_amount(self):
+        return self._total_amount
