@@ -1,9 +1,27 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from model.Hotel import Hotel
+
 class Room:
-    def __init__(self, room_id: int, hotel_id: int, room_number: int, type_id: int, price_per_night: float):
+    def __init__(self, room_id: int, hotel: Hotel, room_number: int, type_id: int, price_per_night: float):
         self._room_id = room_id
-        self._hotel_id = hotel_id
+        self._hotel = hotel
         self._room_id = room_id
         self._room_number = room_number
         self._type_id = type_id
         self._price_per_night = price_per_night
-        
+
+
+    @property
+    def hotel(self) -> Hotel:
+        return self._hotel
+    
+    @hotel.setter
+    def hotel(self, hotel: Hotel):
+        if self._hotel is not hotel:
+            if self._hotel is not None:
+                self._hotel.remove_room(self)
+
+        hotel.add_room(self)

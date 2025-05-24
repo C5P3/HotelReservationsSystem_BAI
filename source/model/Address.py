@@ -9,10 +9,6 @@ class Address:
     def address_id(self) -> int:
         return self._address_id
 
-    @id.setter
-    def id(self, address_id: int) -> None:
-        self._id = address_id
-
     @property
     def street(self) -> str:
         return self._street
