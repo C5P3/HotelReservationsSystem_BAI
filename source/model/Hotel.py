@@ -27,9 +27,12 @@ class Hotel:
             raise ValueError("Name is required and must be a str")
         self._name = name
 
+    @property
+    def rooms(self) -> tuple[Room]:
+        return tuple(self._rooms)
+
     def add_room(self, room: Room):
         # TODO: check if room is not None and room is of instance Room
-
         if room not in self._rooms:
             self._rooms.append(room)
             room.hotel = self

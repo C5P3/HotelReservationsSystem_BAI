@@ -29,3 +29,11 @@ class BookingAccess(BaseDataAccess):
         calculate_days = check_out_date - check_in_date
     
         
+        rows = self._execute_query(query, params, fetch_all=True)
+        return len(rows) > 0
+    
+    def add_booking(self,)
+        
+    # update bookings z.B. Datum
+
+    

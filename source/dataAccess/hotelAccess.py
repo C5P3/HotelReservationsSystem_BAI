@@ -76,6 +76,7 @@ class HotelAccess(BaseDataAccess):
         return hotels
     
     def get_hotel_by_city_and_dates(self, city: str, check_in_date: str, check_out_date: str) -> list[Hotel]:
+
         query = """
         SELECT DISTINCT Hotel.hotel_id, Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
         FROM Hotel
@@ -95,7 +96,7 @@ class HotelAccess(BaseDataAccess):
             )
         );
         """
-        params = (city, city, check_in_date, check_out_date)
+        params = (city, check_in_date, check_out_date)
         results = self.fetchall(query, params)
 
         hotels = []
@@ -103,6 +104,38 @@ class HotelAccess(BaseDataAccess):
             hotel_id, hotel_name, hotel_stars, address_id, address_street, address_city, address_zip = row
             address = Address(address_id, address_street, address_city, address_zip)
             hotel = Hotel(hotel_id, hotel_name, hotel_stars, address)
+            hotels.append(hotel)
+
+        return hotels
+    
+    def get_hotel_by_combinations(self, city: str, stars: int, max_guests: int, check_in_date: str, check_out_date: str) -> list[Hotel]:
+
+        query = """
+        SELECT DISTINCT Hotel.hotel_id, Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
+        FROM Hotel
+        JOIN Address ON Hotel.address_id = Address.address_id
+        JOIN Room ON Room.hotel_id = Hotel.hotel_id
+        JOIN Room_Type ON Room.type_id = Room_Type.type_id
+        WHERE Address.city = ?
+        AND Hotel.stars >= ?
+        AND Room_Type.max_guests >= ?
+        AND Room.room_id NOT IN (
+                SELECT Booking.room_id
+                FROM Booking
+                WHERE NOT (
+                    Booking.check_out_date <= ?
+                    OR Booking.check_in_date >= ?
+            )
+        );
+        """
+        params = (city, stars, max_guests, check_in_date, check_out_date)
+        results = self.fetchall(query, params)
+
+        hotels = []
+        for row in results:
+            hotel_id, hotel_name, stars, address_id, street, city, zip_code = row
+            address = Address(address_id, street, city, zip_code)
+            hotel = Hotel(hotel_id, hotel_name, stars, address)
             hotels.append(hotel)
 
         return hotels
@@ -116,8 +149,7 @@ class HotelAccess(BaseDataAccess):
         query_add_hotel = """ INSERT INTO Hotel (?, ?, ?, ?) """
         self.execute(query_add_hotel, (result_highest_id + 1, name, stars, address_id))
         return True
-
-
+    
     def update_hotel(self, hotel_id:int, name:str = None, stars:int = None, address_id:int = None):
         query = " UPDATE hotel SET "
         fields = []
@@ -151,7 +183,22 @@ class HotelAccess(BaseDataAccess):
             return False
         else:
             return True
+    
+    def get_hotel_information(self) -> list[Hotel]:
 
+        query = """
+        SELECT Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
+        FROM Hotel
+        JOIN Address ON Hotel.address_id = Address.address_id;
+        """
+        results = self.fetchall(query)
 
+        hotels = []
+        for row in results:
+            hotel_id, hotel_name, stars, address_id, street, zip_code, city = row
+            address = Address(address_id, street, city, zip_code)
+            hotel = Hotel(hotel_id, hotel_name, stars, address)
+            hotels.append(hotel)
 
-print()
+        return hotels
+    

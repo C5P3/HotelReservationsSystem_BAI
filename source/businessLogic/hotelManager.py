@@ -19,15 +19,12 @@ class HotelManager:
     def search_hotels_by_city_and_dates(self, city: str, check_in_date: str, check_out_date: str) -> list[Hotel]:
         return self.__hotel_access.get_hotel_by_city_and_dates(city, check_in_date, check_out_date)
     
-    def add_hotel(self, name: str, stars: int, address_id: int):
-        return self.__hotel_access.add_hotel(name, stars, address_id)
-    
-    def update_hotel(self, hotel_id: int, name: str = None, stars: int = None, address_id: int = None):
-        return self.__hotel_access.update_hotel(hotel_id, name, stars, address_id)
-    
-    def delete_hotel(self, hotel_id: int):
-        return self.__hotel_access.delete_hotel(hotel_id)
+    def search_hotels_by_combinations(self, city: str, stars: int, max_guests: int, check_in_date: str, check_out_date: str) -> list[Hotel]:
+        return self.__hotel_access.get_hotel_by_combinations(city, stars, max_guests, check_in_date, check_out_date)
 
+    def get_hotel_information(self) -> list[Hotel]:
+        return self.__hotel_access.get_hotel_information()
+    
     
 
 
