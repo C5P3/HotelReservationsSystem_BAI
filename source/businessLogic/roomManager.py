@@ -1,10 +1,17 @@
 import sqlite3
 from datetime import date
+
 from dataAccess.baseDataAccess import BaseDataAccess
+from dataAccess.bookingAccess import BookingAccess
 
 class RoomManager:
+
+    def __init__(self):
+        self.__bookingAccess = BookingAccess()
+        self.__baseDataAccess = BaseDataAccess()
+
     def variable_price_factor_calculation(self, booking_id, check_in_date:date):
-    query = """ SELECT check_in_date FROM Booking WHERE booking_id = ? """
+        query = """ SELECT check_in_date FROM Booking WHERE booking_id = ? """
     check_in_date =
     
     if check_in_date >= 11:
