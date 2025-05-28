@@ -107,5 +107,49 @@ class HotelAccess(BaseDataAccess):
 
         return hotels
 
+    def add_hotel(self, name:str, stars:int, address_id:int):
+        query_highest_id = """ SELECT MAX(hotel_id) FROM Hotel """
+        result_highest_id = self.fetchone(query_highest_id)
+        if result_highest_id is None:
+            result_highest_id = 0
+
+        query_add_hotel = """ INSERT INTO Hotel (?, ?, ?, ?) """
+        self.execute(query_add_hotel, (result_highest_id + 1, name, stars, address_id))
+        return True
+
+
+    def update_hotel(self, hotel_id:int, name:str = None, stars:int = None, address_id:int = None):
+        query = " UPDATE hotel SET "
+        fields = []
+        params = []
+        
+        if name is not None:
+            fields.append("name = ?")
+            params.append(name)
+        if stars is not None:
+            fields.append("stars = ?")
+            params.append(stars)
+        if address_id is not None:
+            fields.append("address_id = ?")
+            params.append(address_id)
+        
+        query += ", ".join(fields)
+        query += " WHERE hotel_id = ?"
+        params.append(hotel_id)
+        
+        result = self.execute(query, tuple(params))
+        
+        if result == 0:
+            return False
+        else:
+            return True
+        
+    def delete_hotel(self, hotel_id:int):
+        query = """ DELETE FROM Hotel WHERE hotel_id = ? """
+        row_deleted = self.execute(query, (hotel_id,))
+        if row_deleted < 1:
+            return False
+        else:
+            return True
 
 
