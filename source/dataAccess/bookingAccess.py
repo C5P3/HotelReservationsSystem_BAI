@@ -1,3 +1,4 @@
+from datetime import date
 from dataAccess.baseDataAccess import BaseDataAccess
 
 class BookingAccess(BaseDataAccess):
@@ -13,5 +14,18 @@ class BookingAccess(BaseDataAccess):
             )
         """
         params = (room_id, check_out_date, check_in_date, check_in_date, check_out_date, check_in_date, check_out_date)
-        rows = self._execute_query(query, params, fetch_all=True)
+        rows = self.execute(query, params, fetch_all=True)
         return len(rows) > 0
+    """
+    def calculate_days_per_stay(self, booking_id:int, check_in_date:date, check_out_date:date):
+        query_check_in_date = """ SELECT check_in_date FROM Booking WHERE booking_id = ? """
+        params = tuple ([booking_id])
+        check_in_date = self.execute(query_check_in_date, params)
+        
+        query_check_out_date = """ SELECT check_out_date FROM Booking WHERE booking_id = ? """
+        params = tuple ([booking_id])
+        check_out_date= self.execute(query_check_out_date, params)
+
+        calculate_days = check_out_date - check_in_date
+    """
+        
