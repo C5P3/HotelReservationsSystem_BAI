@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import date
 from dataAccess.baseDataAccess import BaseDataAccess
-"""
+
 class RoomManager:
     def variable_price_factor_calculation(self, booking_id, check_in_date:date):
     query = """ SELECT check_in_date FROM Booking WHERE booking_id = ? """
@@ -29,5 +29,3 @@ class RoomManager:
 
 
     def calculate_total_price_per_stay(self, booking_id):
-
-"""
