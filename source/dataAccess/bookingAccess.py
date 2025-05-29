@@ -32,7 +32,10 @@ class BookingAccess(BaseDataAccess):
         rows = self._execute_query(query, params, fetch_all=True)
         return len(rows) > 0
     
-    def add_booking(self,)
+    def add_booking(self, guest_id: int, room_id: int, check_in_date: date, check_out_date: date, total_amount: float):
+        query = """
+        INSERT INTO Booking (guest_id, room_id, check_in_date, check_out_date, total_amount)
+        VALUES (?, ?, ?, ?, ?)"""
         
     # update bookings z.B. Datum
 
