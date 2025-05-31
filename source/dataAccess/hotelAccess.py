@@ -139,6 +139,24 @@ class HotelAccess(BaseDataAccess):
             hotels.append(hotel)
 
         return hotels
+    
+    def get_hotel_information(self) -> list[Hotel]:
+
+        query = """
+        SELECT Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
+        FROM Hotel
+        JOIN Address ON Hotel.address_id = Address.address_id;
+        """
+        results = self.fetchall(query)
+
+        hotels = []
+        for row in results:
+            hotel_id, hotel_name, stars, address_id, street, zip_code, city = row
+            address = Address(address_id, street, city, zip_code)
+            hotel = Hotel(hotel_id, hotel_name, stars, address)
+            hotels.append(hotel)
+
+        return hotels
 
     def add_hotel(self, name:str, stars:int, address_id:int):
         query_highest_id = """ SELECT MAX(hotel_id) FROM Hotel """
@@ -184,21 +202,4 @@ class HotelAccess(BaseDataAccess):
         else:
             return True
     
-    def get_hotel_information(self) -> list[Hotel]:
-
-        query = """
-        SELECT Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
-        FROM Hotel
-        JOIN Address ON Hotel.address_id = Address.address_id;
-        """
-        results = self.fetchall(query)
-
-        hotels = []
-        for row in results:
-            hotel_id, hotel_name, stars, address_id, street, zip_code, city = row
-            address = Address(address_id, street, city, zip_code)
-            hotel = Hotel(hotel_id, hotel_name, stars, address)
-            hotels.append(hotel)
-
-        return hotels
     

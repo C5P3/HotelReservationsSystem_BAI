@@ -1,7 +1,15 @@
+import os
+import sqlite3
 from datetime import date
+
 from dataAccess.baseDataAccess import BaseDataAccess
+from model.Booking import Booking
 
 class BookingAccess(BaseDataAccess):
+
+    def __init__(self, db_connection_str = None):
+        super().__init__(db_connection_str)
+
     def get_conflicting_bookings(self, room_id, check_in_date, check_out_date):
         query = """
             SELECT booking_id FROM Booking
@@ -35,7 +43,8 @@ class BookingAccess(BaseDataAccess):
     def add_booking(self, guest_id: int, room_id: int, check_in_date: date, check_out_date: date, total_amount: float):
         query = """
         INSERT INTO Booking (guest_id, room_id, check_in_date, check_out_date, total_amount)
-        VALUES (?, ?, ?, ?, ?)"""
+        VALUES (?, ?, ?, ?, ?)
+        """
         
     # update bookings z.B. Datum
 
