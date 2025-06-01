@@ -14,6 +14,24 @@ class RoomManager:
         self.room_access = RoomAccess()
         self.hotel_access = HotelAccess() 
 
+    def find_available_rooms_for_guest(self, check_in_date_str: date, check_out_date_str: date, city: str = None, room_type_description: str = None, num_guests: int = None):
+        try:
+            check_in_date = datetime.strptime(check_in_date_str, '%Y-%m-%d').date()
+            check_out_date = datetime.strptime(check_out_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return False
+
+        if check_out_date <= check_in_date:
+            return False
+
+        available_rooms = self.room_access.find_available_rooms(
+            check_in_date=check_in_date,
+            check_out_date=check_out_date,
+            city=city,
+            room_type_description=room_type_description,
+            max_guests_needed=num_guests)
+        return available_rooms
+
     def get_normal_price_per_night(self, room_id: int):
         query = "SELECT price_per_night FROM Room WHERE room_id = ?"
         row = self.room_access.fetchone(query, (room_id,))
