@@ -25,7 +25,7 @@ class BookingAccess(BaseDataAccess):
         rows = self.execute(query, params, fetch_all=True)
         return len(rows) > 0
     
-    def calculate_days_per_stay(self, booking_id:int, check_in_date:date, check_out_date:date):
+    def calculate_days_per_stay(self, booking_id:int, check_in_date:date, check_out_date:date): # Needs fix at Query
         query_check_in_date = """ SELECT check_in_date FROM Booking WHERE booking_id = ? """
         params = tuple ([booking_id])
         check_in_date = self.execute(query_check_in_date, params)

@@ -25,8 +25,7 @@ class RoomAccess(BaseDataAccess):
     
     def get_all_rooms_with_facilities(self, ):
         query =  """
-        SELECT
-        Room.room_id, Room.room_number, Room.price_per_night, Hotel.hotel_id, Hotel.name 
+        SELECT Room.room_id, Room.room_number, Room.price_per_night, Hotel.hotel_id, Hotel.name 
         AS hotel_name, Hotel.stars 
         AS hotel_stars, RoomType.type_id, RoomType.description 
         AS room_type_description, RoomType.max_guests,
@@ -59,82 +58,20 @@ class RoomAccess(BaseDataAccess):
             
             "facilities": [f.strip() for f in (row['facilities_list'] or '').split(',') if f.strip()]} for row in rows])
 
-    def find_available_rooms(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, max_guests_needed: int = None):
-            params = []
-            query = """
-            SELECT Room.room_id, Room.room_number, Room.price_per_night, RoomType.type_id, RoomType.description 
-            AS room_type_description, RoomType.max_guests, Hotel.hotel_id, Hotel.name 
-            AS hotel_name, Hotel.stars AS hotel_stars, Address.address_id, Address.street, Address.city, Address.zip_code,
-                GROUP_CONCAT(Facilities.facility_name, ', ') AS facilities_list
-            FROM Room Room
-            JOIN Room_Type RoomType ON Room.type_id = RoomType.type_id
-            JOIN Hotel Hotel ON Room.hotel_id = Hotel.hotel_id
-            JOIN Address Address ON Hotel.address_id = Address.address_id
-            LEFT JOIN Room_Facilities RoomFacilities ON Room.room_id = RoomFacilities.room_id
-            LEFT JOIN Facilities Facilities ON RoomFacilities.facility_id = Facilities.facility_id
-            WHERE Room.room_id NOT IN (
-                SELECT Booking.room_id
-                FROM Booking Booking
-                WHERE Booking.is_cancelled = 0 
-                AND (
-                    (Booking.check_in_date < ? AND Booking.check_out_date > ?) OR 
-                    (Booking.check_in_date >= ? AND Booking.check_in_date < ?) OR
-                    (Booking.check_out_date > ? AND Booking.check_out_date <= ?) OR 
-                    (Booking.check_in_date <= ? AND Booking.check_out_date >= ?) 
-                ))
-            """
-            params.extend([str(check_out_date), str(check_in_date), 
-                        str(check_in_date), str(check_out_date),
-                        str(check_in_date), str(check_out_date),
-                        str(check_in_date), str(check_out_date)])
-
-            filters = []
-            if city:
-                filters.append("Address.city LIKE ?")
-                params.append(f'%{city}%')
-            if room_type_description:
-                filters.append("RoomType.description = ?")
-                params.append(room_type_description)
-            if max_guests_needed:
-                filters.append("RoomType.max_guests >= ?") 
-                params.append(max_guests_needed)
-
-            if filters:
-                query += " AND " + " AND ".join(filters)
-
-            query += """
-                GROUP BY Room.room_id, Room.room_number, Room.price_per_night, RoomType.type_id, RoomType.description, RoomType.max_guests, 
-                Hotel.hotel_id, Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
-                ORDER BY Hotel.name, Room.room_number;
-            """
-
-            rows = self.fetchall(query, tuple(params))
-
-            result = []
-            for row in rows:
-                facilities = [f.strip() for f in (row['facilities_list'] or '').split(',') if f.strip()]
-
-                room_data = {
-                    "room_id": row["room_id"],
-                    "room_number": row["room_number"],
-                    "price_per_night": row["price_per_night"],
-                    "room_type": {
-                        "type_id": row["type_id"],
-                        "description": row["room_type_description"],
-                        "max_guests": row["max_guests"]
-                    },
-                    "hotel": {
-                        "hotel_id": row["hotel_id"],
-                        "name": row["hotel_name"],
-                        "stars": row["hotel_stars"],
-                        "address": {
-                            "address_id": row["address_id"],
-                            "street": row["street"],
-                            "city": row["city"],
-                            "zip_code": row["zip_code"]
-                        }
-                    },
-                    "facilities": facilities
-                }
-                result.append(room_data)
-            return result
+    def find_available_rooms(self, room_id: int, hotel_id: int, check_in_date: date, check_out_date: date):
+        params = []
+        query = """ 
+        SELECT Room.room_id, hotel_id
+        FROM Room
+        JOIN Booking ON Booking.room_id = Room.room_id
+        WHERE Room.room_id
+        NOT IN (
+        SELECT room_id
+        FROM Booking
+        WHERE is_cancelled = 0
+        AND (Booking.check_in_date < ? AND Booking.check_out_date > ?) 
+        OR (Booking.check_in_date >= ? AND Booking.check_in_date < ?) 
+        OR (Booking.check_out_date > ? AND Booking.check_out_date <= ?) 
+        OR (Booking.check_in_date <= ? AND Booking.check_out_date >= ?)        
+        )
+        """
