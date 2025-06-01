@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from typing import Optional, Tuple, List, Any
+from typing import Optional, Tuple, Union, List, Any
 
 class BaseDataAccess:
     def __init__(self, db_connection_str: Optional[str] = None):
@@ -83,3 +83,5 @@ class BaseDataAccess:
             except sqlite3.Error as e:
                 conn.rollback()
                 raise e
+            
+            

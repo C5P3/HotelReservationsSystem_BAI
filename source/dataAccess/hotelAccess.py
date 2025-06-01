@@ -11,6 +11,20 @@ class HotelAccess(BaseDataAccess):
     def __init__(self, db_connection_str = None):
         super().__init__(db_connection_str)
 
+    def get_hotel_by_id(self, hotel_id: int):
+        query = """
+            SELECT H.hotel_id, H.name, H.stars, A.address_id, A.street, A.city, A.zip_code
+            FROM Hotel H
+            JOIN Address A ON H.address_id = A.address_id
+            WHERE H.hotel_id = ?
+        """
+        row = self.fetchone(query, (hotel_id,))
+        if row:
+            address = Address(row['address_id'], row['street'], row['city'], row['zip_code'])
+            return Hotel(row['hotel_id'], row['name'], row['stars'], row['address_id'], address)
+        return None
+
+
     def get_hotel_by_city(self, city: str) -> list[Hotel]: # Ruft alle Hotels in einer bestimmten Stadt ab und gibt sie als Liste von Hotel-Objekten zurück.
 
         query = """
