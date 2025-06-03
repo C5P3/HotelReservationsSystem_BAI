@@ -89,6 +89,7 @@ class BookingAccess(BaseDataAccess):
         SELECT booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount 
         FROM Booking
         """        
-        all_bookings = self.fetchall(query)
+        params = (booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount)
+        all_bookings = self.fetchall(query, params)
         return tuple(all_bookings)
     

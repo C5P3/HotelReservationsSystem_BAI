@@ -11,4 +11,13 @@ class InvoiceAccess(BaseDataAccess):
     def __init__(self, db_connection_str = None):
         super().__init__(db_connection_str)
 
-    def create_invoice_for_booking(self, booking_id: str,  )
+    def create_invoice_for_booking(self, booking_id: int, total_amount: float):
+        today = date.today().isoformat()  # Datumsformat: 'YYYY-MM-DD'
+        
+        query = """
+        INSERT INTO Invoice (booking_id, issue_date, total_amount)
+        VALUES (?, ?, ?)      
+        """
+        params = (booking_id, today, total_amount)
+        results = self.execute(query, params)
+
