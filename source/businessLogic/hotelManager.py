@@ -25,6 +25,16 @@ class HotelManager:
     def search_hotel_information(self) -> list[Hotel]:
         return self.__hotel_access.get_hotel_information()
     
+    def add_hotel(self, name: str, stars: int, address_id: int):
+        return self.__hotel_access.add_hotel(name, stars, address_id)
+    
+    def update_hotel(self, hotel_id: int, name: str = None, stars: int = None, address_id: int = None):
+        return self.__hotel_access.update_hotel(hotel_id, name, stars, address_id)
+    
+    def delete_hotel(self, hotel_id: int):
+        return self.__hotel_access.delete_hotel(hotel_id)
+    
+    
     
 
 
