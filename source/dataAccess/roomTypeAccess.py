@@ -9,7 +9,7 @@ class RoomTypeAccess(BaseDataAccess):
 
     def get_room_type_by_id(self, type_id):
         query = "SELECT type_id, description, max_guests FROM Room_Type WHERE type_id = ?"
-        row = self.fetchone(query, (type_id,), fetch_one=True)
+        row = self.fetchone(query, (type_id,))
         if row:
             return RoomType(row['type_id'], row['description'], row['max_guests'])
         return None
