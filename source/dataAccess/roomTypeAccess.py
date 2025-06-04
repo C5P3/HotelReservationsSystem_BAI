@@ -4,7 +4,8 @@ from dataAccess.baseDataAccess import BaseDataAccess
 from model.RoomType import RoomType
 
 class RoomTypeAccess(BaseDataAccess):
-    def __init__(self, db_connection_str: str):
+
+    def __init__(self, db_connection_str = None):
         super().__init__(db_connection_str)
 
     def get_room_type_by_id(self, type_id):
