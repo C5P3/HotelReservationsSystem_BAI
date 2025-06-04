@@ -33,7 +33,7 @@ class HotelAccess(BaseDataAccess):
         JOIN Address ON Hotel.address_id = Address.address_id
         WHERE Address.city = ?
         """
-        params = (city)
+        params = (city,)
         results = self.fetchall(query, params)
 
         hotels = []
