@@ -5,7 +5,7 @@ from model.Address import Address
 
 
 class AddressAccess(BaseDataAccess):
-    def __init__(self, db_connection_str: str):
+    def __init__(self, db_connection_str = None):
         super().__init__(db_connection_str)
 
     def get_address_by_id(self, address_id):
