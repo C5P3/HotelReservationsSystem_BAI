@@ -1,13 +1,17 @@
 from dataAccess.roomTypeAccess import RoomTypeAccess
+from dataAccess.baseDataAccess import BaseDataAccess
+
+
 from model.RoomType import RoomType
 
 class RoomTypeManager:
 
     def __init__(self):
-        self.__roomType_access = RoomTypeAccess()
+        self.baseDataAccess = BaseDataAccess()
+        self.roomType_access = RoomTypeAccess()
 
-    def get_room_tyoe_by_id(self, tyoe_id: int):
-        return self.__roomType_access.get_room_type_by_id
+    def get_room_type_by_id(self, type_id: int):
+        return self.roomType_access.get_all_room_types
     
     def get_room_by_description(self, description: str):
         return self.__roomType_access.get_room_type_by_description
