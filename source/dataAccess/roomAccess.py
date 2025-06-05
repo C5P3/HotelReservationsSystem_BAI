@@ -9,6 +9,41 @@ from model.Address import Address
 from model.Facility import Facility
 
 class RoomAccess(BaseDataAccess):
+    def add_room(self, room_number, hotel_id, type_id, price_per_night):
+        query = """
+            INSERT INTO Room (room_number, hotel_id, type_id, price_per_night)
+            VALUES (?, ?, ?, ?)
+        """
+        self.execute(query, (room_number, hotel_id, type_id, price_per_night))
+        return True
+
+    def update_room(self, room_id, room_number=None, hotel_id=None, type_id=None, price_per_night=None):
+        fields = []
+        params = []
+        if room_number is not None:
+            fields.append("room_number = ?")
+            params.append(room_number)
+        if hotel_id is not None:
+            fields.append("hotel_id = ?")
+            params.append(hotel_id)
+        if type_id is not None:
+            fields.append("type_id = ?")
+            params.append(type_id)
+        if price_per_night is not None:
+            fields.append("price_per_night = ?")
+            params.append(price_per_night)
+        if not fields:
+            return False 
+        params.append(room_id)
+        query = f"UPDATE Room SET {', '.join(fields)} WHERE room_id = ?"
+        self.execute(query, tuple(params))
+        return True
+
+    def delete_room(self, room_id):
+        query = "DELETE FROM Room WHERE room_id = ?"
+        self.execute(query, (room_id,))
+        return True
+    
     def get_all_rooms(self):
         query = "SELECT room_id, hotel_id, room_number, type_id, price_per_night FROM Room"
         rows = self.execute(query, fetch_all=True)
@@ -133,4 +168,6 @@ class RoomAccess(BaseDataAccess):
             }
             for row in rows
         ]
+    
+   
 

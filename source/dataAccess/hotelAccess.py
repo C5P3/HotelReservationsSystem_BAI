@@ -172,15 +172,10 @@ class HotelAccess(BaseDataAccess):
 
         return hotels
 
-    def add_hotel(self, name:str, stars:int, address_id:int):
-        query_highest_id = """ SELECT MAX(hotel_id) FROM Hotel """
-        result_highest_id = self.fetchone(query_highest_id)
-        if result_highest_id is None:
-            result_highest_id = 0
-
-        query_add_hotel = """ INSERT INTO Hotel (?, ?, ?, ?) """
-        self.execute(query_add_hotel, (result_highest_id + 1, name, stars, address_id))
-        return True
+    def add_hotel(self, name, stars, address_id):
+        query = "INSERT INTO Hotel (name, stars, address_id) VALUES (?, ?, ?)"
+        lastrowid, _ = self.execute(query, (name, stars, address_id))
+        return {"hotel_id": lastrowid, "name": name, "stars": stars, "address_id": address_id}
     
     def update_hotel(self, hotel_id:int, name:str = None, stars:int = None, address_id:int = None):
         query = " UPDATE hotel SET "
@@ -215,5 +210,5 @@ class HotelAccess(BaseDataAccess):
             return False
         else:
             return True
-    
-    
+
+
