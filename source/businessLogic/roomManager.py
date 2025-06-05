@@ -14,22 +14,20 @@ class RoomManager:
         self.room_access = RoomAccess()
         self.hotel_access = HotelAccess() 
 
-    def find_available_rooms_for_guest(self, check_in_date_str: date, check_out_date_str: date, city: str = None, room_type_description: str = None, num_guests: int = None):
-        try:
-            check_in_date = datetime.strptime(check_in_date_str, '%Y-%m-%d').date()
-            check_out_date = datetime.strptime(check_out_date_str, '%Y-%m-%d').date()
-        except ValueError:
+    def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
+        if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
             return False
 
         if check_out_date <= check_in_date:
             return False
 
         available_rooms = self.room_access.find_available_rooms(
-            check_in_date=check_in_date,
-            check_out_date=check_out_date,
-            city=city,
-            room_type_description=room_type_description,
-            max_guests_needed=num_guests)
+            check_in_date = check_in_date,
+            check_out_date = check_out_date,
+            city = city,
+            room_type_description = room_type_description,
+            max_guests = num_guests
+        )
         return available_rooms
 
     def get_normal_price_per_night(self, room_id: int):
@@ -92,3 +90,12 @@ class RoomManager:
     def get_all_rooms_details_with_facilities(self):
         rooms_data = self.room_access.get_all_rooms_with_facilities()
         return rooms_data
+
+    def get_room_details_with_total_price(self, room_id: int, check_in_str: str, check_out_str: str):
+        details = self.room_access.get_room_details_by_id(room_id)
+        if not details:
+            return None
+
+        total_price = self.calculate_total_price_per_stay(room_id, check_in_str, check_out_str)
+        details["total_price"] = total_price
+        return details

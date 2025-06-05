@@ -7,6 +7,7 @@ from model.RoomType import RoomType
 class RoomTypeManager:
 
     def __init__(self):
+        
         self.__roomType_access = RoomTypeAccess()
 
     def get_room_type_by_id(self, type_id: int):

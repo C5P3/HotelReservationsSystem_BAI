@@ -16,6 +16,7 @@ class RoomAccess(BaseDataAccess):
             return [Room(*row) for row in rows]
         return []
 
+    # evtl. löschen ?
     def get_room_by_id(self, room_id):
         query = "SELECT room_id, hotel_id, room_number, type_id, price_per_night FROM Room WHERE room_id = ?"
         row = self.execute(query, (room_id,), fetch_one=True)
@@ -23,6 +24,33 @@ class RoomAccess(BaseDataAccess):
             return Room(*row)
         return None
     
+    def get_room_details_by_id(self, room_id: int):
+        query = """
+            SELECT R.room_id, R.room_number, R.price_per_night,
+                   RT.type_id, RT.description AS room_type_description, RT.max_guests,
+                   GROUP_CONCAT(F.facility_name, ', ') AS facilities_list
+            FROM Room R
+            JOIN Room_Type RT ON R.type_id = RT.type_id
+            LEFT JOIN Room_Facilities RF ON R.room_id = RF.room_id
+            LEFT JOIN Facilities F ON RF.facility_id = F.facility_id
+            WHERE R.room_id = ?
+            GROUP BY R.room_id
+        """
+        row = self.fetchone(query, (room_id,))
+        if row:
+            return {
+                "room_id": row["room_id"],
+                "room_number": row["room_number"],
+                "price_per_night": row["price_per_night"],
+                "room_type": {
+                    "type_id": row["type_id"],
+                    "description": row["room_type_description"],
+                    "max_guests": row["max_guests"]
+                },
+                "facilities": [f.strip() for f in (row['facilities_list'] or '').split(',') if f.strip()]
+            }
+        return None
+
     def get_all_rooms_with_facilities(self, ):
         query =  """
         SELECT Room.room_id, Room.room_number, Room.price_per_night, Hotel.hotel_id, Hotel.name 
@@ -58,28 +86,51 @@ class RoomAccess(BaseDataAccess):
             
             "facilities": [f.strip() for f in (row['facilities_list'] or '').split(',') if f.strip()]} for row in rows])
 
-    def find_available_rooms(self, check_in_date: date, check_out_date: date):
-        query = """ 
-            SELECT R.room_id, R.hotel_id
+    def find_available_rooms(self, check_in_date, check_out_date, city=None, room_type_description=None, max_guests=None):
+        query = """
+            SELECT R.room_id, R.room_number, R.price_per_night,
+                   RT.type_id, RT.description AS room_type_description, RT.max_guests,
+                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city
             FROM Room R
-            WHERE R.room_id 
-            NOT IN (
-            SELECT B.room_id 
-            FROM Booking B
-            WHERE B.is_cancelled = 0
-            AND (B.check_in_date < '?' AND B.check_out_date > '?')
-            );
+            JOIN Room_Type RT ON R.type_id = RT.type_id
+            JOIN Hotel H ON R.hotel_id = H.hotel_id
+            JOIN Address A ON H.address_id = A.address_id
+            WHERE R.room_id NOT IN (
+                SELECT B.room_id
+                FROM Booking B
+                WHERE B.is_cancelled = 0
+                  AND (B.check_in_date < ? AND B.check_out_date > ?)
+            )
         """
-        params = () 
-        
-        rows = self.fetchall(query, params)
-        
+        params = [check_out_date, check_in_date]
+
+        if city:
+            query += " AND A.city = ?"
+            params.append(city)
+        if room_type_description:
+            query += " AND RT.description = ?"
+            params.append(room_type_description)
+        if max_guests:
+            query += " AND RT.max_guests >= ?"
+            params.append(max_guests)
+
+        rows = self.fetchall(query, tuple(params))
         return [
             {
                 "room_id": row["room_id"],
-                "hotel_id": row["hotel_id"]
+                "room_number": row["room_number"],
+                "price_per_night": row["price_per_night"],
+                "room_type": {
+                    "type_id": row["type_id"],
+                    "description": row["room_type_description"],
+                    "max_guests": row["max_guests"]
+                },
+                "hotel": {
+                    "name": row["hotel_name"],
+                    "stars": row["hotel_stars"],
+                    "city": row["hotel_city"]
+                }
             }
             for row in rows
         ]
-        
-    
+
