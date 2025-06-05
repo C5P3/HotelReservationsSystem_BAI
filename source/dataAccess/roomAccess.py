@@ -127,6 +127,7 @@ class RoomAccess(BaseDataAccess):
                    RT.type_id, RT.description AS room_type_description, RT.max_guests,
                    H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city
             FROM Room R
+<<<<<<< Updated upstream
             JOIN Room_Type RT ON R.type_id = RT.type_id
             JOIN Hotel H ON R.hotel_id = H.hotel_id
             JOIN Address A ON H.address_id = A.address_id
@@ -150,6 +151,20 @@ class RoomAccess(BaseDataAccess):
             params.append(max_guests)
 
         rows = self.fetchall(query, tuple(params))
+=======
+            WHERE R.room_id 
+            NOT IN (
+            SELECT B.room_id 
+            FROM Booking B
+            WHERE B.is_cancelled = 0
+            AND (B.check_in_date < ? AND B.check_out_date > ?)
+            );
+        """
+        params = (check_out_date, check_in_date) 
+        
+        rows = self.fetchall(query, params)
+        
+>>>>>>> Stashed changes
         return [
             {
                 "room_id": row["room_id"],
