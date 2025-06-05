@@ -1,11 +1,14 @@
 from dataAccess.hotelAccess import HotelAccess
-from model.Hotel import Hotel
+from dataAccess.roomAccess import RoomAccess
 
+from model.Hotel import Hotel
+from model.Room import Room
 
 class HotelManager:
 
     def __init__(self):
         self.__hotel_access = HotelAccess()
+        self.__room_access = RoomAccess()
     
     def search_hotels_by_city(self, city: str) -> list[Hotel]:
         return self.__hotel_access.get_hotel_by_city(city,)
@@ -17,7 +20,10 @@ class HotelManager:
         return self.__hotel_access.get_hotel_by_city_and_max_guests(city, max_guests)
     
     def search_hotels_by_city_and_dates(self, city: str, check_in_date: str, check_out_date: str) -> list[Hotel]:
-        return self.__hotel_access.get_hotel_by_city_and_dates(city, check_in_date, check_out_date)
+        available_rooms = self.__room_access.find_available_rooms(check_in_date, check_out_date)
+        hotel_ids_with_available_rooms = set([room["hotel_id"] for room in available_rooms])
+        hotels_in_city = self.__hotel_access.get_hotel_by_city(city)
+        return [hotel for hotel in hotels_in_city if hotel.hotel_id in hotel_ids_with_available_rooms]
     
     def search_hotels_by_combinations(self, city: str, stars: int, max_guests: int, check_in_date: str, check_out_date: str) -> list[Hotel]:
         return self.__hotel_access.get_hotel_by_combinations(city, stars, max_guests, check_in_date, check_out_date)
