@@ -126,9 +126,11 @@ class HotelAccess(BaseDataAccess):
         query = """
         SELECT Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
         FROM Hotel
-        JOIN Address ON Hotel.address_id = Address.address_id;
+        JOIN Address ON Hotel.address_id = Address.address_id
+        WHERE Hotel.name = ?
         """
-        results = self.fetchall(query)
+        params = ()
+        results = self.fetchall(query, params)
 
         hotels = []
         for row in results:
