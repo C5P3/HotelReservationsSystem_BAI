@@ -14,6 +14,15 @@ class RoomManager:
         self.room_access = RoomAccess()
         self.hotel_access = HotelAccess() 
 
+    def add_room(self, room_number: str, hotel_id: int, type_id: int, price_per_night: float):
+        return self.room_access.add_room(room_number, hotel_id, type_id, price_per_night)
+
+    def update_room(self, room_id: int, room_number: str = None, hotel_id: int = None, type_id: int = None, price_per_night: float = None):
+        return self.room_access.update_room(room_id, room_number, hotel_id, type_id, price_per_night)
+
+    def delete_room(self, room_id: int):
+        return self.room_access.delete_room(room_id)
+
     def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
         if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
             return False
