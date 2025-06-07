@@ -1,9 +1,9 @@
 class Address:
-    def __init__(self, address_id: int, street: str, city: str, zip: str):
+    def __init__(self, address_id: int, street: str, city: str, zip_code: str):
         self._address_id = address_id
         self._street = street
         self._city = city
-        self._zip = zip
+        self._zip_code = zip_code
 
     @property
     def address_id(self) -> int:
@@ -26,23 +26,23 @@ class Address:
         self._city = city
 
     @property
-    def zip(self) -> str:
-        return self._zip
+    def zip_code(self) -> str:
+        return self._zip_code
 
-    @zip.setter
-    def zip(self, zip_code: str) -> None:
-        self._zip = zip_code
+    @zip_code.setter
+    def zip_code(self, zip_code: str) -> None:
+        self._zip_code = zip_code
 
     def __str__(self) -> str:
-        return "Address(id={0},street={1},zip={2},city={3})".format(
-            self._address_id, self._street, self._zip, self._city
+        return "Address(id={0},street={1},zip_code={2},city={3})".format(
+            self._address_id, self._street, self._zip_code, self._city
         )
 
     def to_dict(self):
         return {
             "id": self._address_id,
             "street": self._street,
-            "zip": self._zip,
+            "zip_code": self._zip_code,
             "city": self._city,
         }
  

@@ -11,6 +11,24 @@ class HotelAccess(BaseDataAccess):
     def __init__(self, db_connection_str = None):
         super().__init__(db_connection_str)
 
+    def get_all_hotels(self) -> list[Hotel]:
+        
+        query = """
+        SELECT Hotel.hotel_id, Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
+        FROM Hotel
+        JOIN Address ON Hotel.address_id = Address.address_id
+        """
+        results = self.fetchall(query)
+
+        hotels = []
+        for row in results:
+            hotel_id, hotel_name, hotel_stars, address_id, street, city, zip_code = row
+            address = Address(address_id, street, city, zip_code)
+            hotel = Hotel(hotel_id, hotel_name, hotel_stars, address)
+            hotels.append(hotel)
+
+        return hotels
+
     def get_hotel_by_id(self, hotel_id: int):
         query = """
             SELECT H.hotel_id, H.name, H.stars, A.address_id, A.street, A.city, A.zip_code
@@ -23,7 +41,6 @@ class HotelAccess(BaseDataAccess):
             address = Address(row['address_id'], row['street'], row['city'], row['zip_code'])
             return Hotel(row['hotel_id'], row['name'], row['stars'], row['address_id'], address)
         return None
-
 
     def get_hotel_by_city(self, city: str) -> list[Hotel]: # Ruft alle Hotels in einer bestimmten Stadt ab und gibt sie als Liste von Hotel-Objekten zurück.
 
@@ -85,38 +102,6 @@ class HotelAccess(BaseDataAccess):
             hotel_id, hotel_name, hotel_stars, address_id, address_street, address_city, address_zip = row
             address = Address(address_id, address_street, address_city, address_zip)
             hotel = Hotel(hotel_id, hotel_name, hotel_stars, address)
-            hotels.append(hotel)
-
-        return hotels
-    
-    def get_hotel_by_combinations(self, city: str, stars: int, max_guests: int, check_in_date: str, check_out_date: str) -> list[Hotel]:
-
-        query = """
-        SELECT DISTINCT Hotel.hotel_id, Hotel.name, Hotel.stars, Address.address_id, Address.street, Address.city, Address.zip_code
-        FROM Hotel
-        JOIN Address ON Hotel.address_id = Address.address_id
-        JOIN Room ON Room.hotel_id = Hotel.hotel_id
-        JOIN Room_Type ON Room.type_id = Room_Type.type_id
-        WHERE Address.city = ?
-        AND Hotel.stars >= ?
-        AND Room_Type.max_guests >= ?
-        AND Room.room_id NOT IN (
-                SELECT Booking.room_id
-                FROM Booking
-                WHERE NOT (
-                    Booking.check_out_date <= ?
-                    OR Booking.check_in_date >= ?
-            )
-        );
-        """
-        params = (city, stars, max_guests, check_in_date, check_out_date)
-        results = self.fetchall(query, params)
-
-        hotels = []
-        for row in results:
-            hotel_id, hotel_name, stars, address_id, street, city, zip_code = row
-            address = Address(address_id, street, city, zip_code)
-            hotel = Hotel(hotel_id, hotel_name, stars, address)
             hotels.append(hotel)
 
         return hotels

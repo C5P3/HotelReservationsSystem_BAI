@@ -22,10 +22,18 @@ class Hotel:
         return self._name
     
     @name.setter
-    def name(self, name:str):
+    def name(self, name: str):
         if not name and isinstance(name, str):
             raise ValueError("Name is required and must be a str")
         self._name = name
+
+    @property
+    def stars(self) -> int:
+        return self._stars
+
+    @property
+    def address(self) -> str:
+        return self._address
 
     @property
     def rooms(self) -> tuple[Room]:
