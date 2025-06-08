@@ -84,6 +84,7 @@ class BookingAccess(BaseDataAccess):
         rowcount = result_tuple[1]        
         return True
 
+
     def get_all_bookings (self, booking_id: int, guest_id: int, room_id: int, check_in_date: date, check_out_date: date, is_cancelled: bool, total_amount: float):
         query = """
         SELECT booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount 
@@ -92,4 +93,8 @@ class BookingAccess(BaseDataAccess):
         params = (booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount)
         all_bookings = self.fetchall(query, params)
         return tuple(all_bookings)
+    
+    def get_all_bookings(self):
+        query = "SELECT * FROM Booking"
+        return self.fetchall(query)
     

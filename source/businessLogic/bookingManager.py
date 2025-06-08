@@ -11,9 +11,11 @@ class BookingManager:
     def create_booking(self, guest_id: int, room_id: int, check_in_date: date, check_out_date: date, total_amount: float):
         return self.__booking_access(guest_id, room_id, check_in_date, check_out_date, total_amount)
     
+    # Evtl. Löschen, da man bei einer Suche alles eingeben bzw. bereits wissen muss
     def search_all_bookings(self, booking_id: int, guest_id: int, room_id: int, check_in_date: date, check_out_date: date, is_cancelled: bool, total_amount: float):
         return self.__booking_access(booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount)
     
-    
+    def get_all_bookings(self):
+        return self.__booking_access.get_all_bookings()
     
 
