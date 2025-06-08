@@ -18,10 +18,25 @@ class BookingManager:
     def get_all_bookings(self):
         return self.__booking_access.get_all_bookings()
     
+    def update_booking(self, booking_id, guest_id=None, room_id=None, check_in_date=None, check_out_date=None, is_cancelled=None, total_amount=None):
+        return self.__booking_access.update_booking(booking_id, guest_id=guest_id, room_id=room_id, check_in_date=check_in_date, check_out_date=check_out_date, is_cancelled=is_cancelled, total_amount=total_amount)
+    
     def search_booking_by_guest(self, guest_id: int) -> list[Booking]:
         return self.__booking_access.get_bookings_by_guest(guest_id)
     
+    def cancel_booking(self, booking_id: int) -> bool:
+        booking = self.__booking_access.get_booking_by_id(booking_id)
+        if not booking:
+            print("Buchung nicht gefunden.")
+            return False
+        if booking.is_cancelled:
+            print("Buchung ist bereits storniert.")
+            return False
+        success = self.__booking_access.update_booking(booking_id, is_cancelled=True)
+        return success
+
     
+
     
 
     
