@@ -150,24 +150,15 @@ class RoomAccess(BaseDataAccess):
             params.append(max_guests)
 
         rows = self.fetchall(query, tuple(params))
-        return [
-            {
-                "room_id": row["room_id"],
-                "room_number": row["room_number"],
-                "price_per_night": row["price_per_night"],
-                "room_type": {
-                    "type_id": row["type_id"],
-                    "description": row["room_type_description"],
-                    "max_guests": row["max_guests"]
-                },
-                "hotel": {
-                    "name": row["hotel_name"],
-                    "stars": row["hotel_stars"],
-                    "city": row["hotel_city"]
-                }
-            }
-            for row in rows
-        ]
+        
+        rooms = []
+        for row in rows:
+            hotel = Hotel(row["hotel_name"], row["hotel_stars"], row["hotel_city"])
+            room_type = RoomType(row["type_id"], row["room_type_description"], row["max_guests"])
+            room = Room(row["room_id"], row["room_number"], row["price_per_night"], room_type, hotel)
+            rooms.append(room)
+
+        return rooms
     
     
    

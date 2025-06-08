@@ -25,10 +25,10 @@ class RoomManager:
 
     def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
         if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
-            return False
+            return []
 
         if check_out_date <= check_in_date:
-            return False
+            return []
 
         available_rooms = self.room_access.find_available_rooms(
             check_in_date = check_in_date,
@@ -37,7 +37,7 @@ class RoomManager:
             room_type_description = room_type_description,
             max_guests = num_guests
         )
-        return available_rooms
+        return available_rooms if available_rooms else []
 
     def get_normal_price_per_night(self, room_id: int):
         query = "SELECT price_per_night FROM Room WHERE room_id = ?"

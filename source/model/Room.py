@@ -12,6 +12,21 @@ class Room:
         self._type_id = type_id
         self._price_per_night = price_per_night
 
+    @property
+    def room_id(self) -> int:
+        return self._room_id
+
+    @property
+    def room_number(self) -> int:
+        return self._room_number
+
+    @property
+    def price_per_night(self) -> float:
+        return self._price_per_night
+
+    @property
+    def type_id(self) -> int:
+        return self._type_id
 
     @property
     def hotel(self) -> Hotel:
