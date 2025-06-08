@@ -157,9 +157,12 @@ class HotelAccess(BaseDataAccess):
         else:
             return True
         
-    def delete_hotel(self, hotel_id:int):
+    def delete_hotel(self, hotel_id):
         query = """ DELETE FROM Hotel WHERE hotel_id = ? """
         row_deleted = self.execute(query, (hotel_id,))
+        # Falls row_deleted ein Tuple ist, nimmt das Programm das erste Element
+        if isinstance(row_deleted, tuple):
+            row_deleted = row_deleted[0]
         if row_deleted < 1:
             return False
         else:
