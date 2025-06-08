@@ -18,4 +18,11 @@ class BookingManager:
     def get_all_bookings(self):
         return self.__booking_access.get_all_bookings()
     
+    def search_booking_by_guest(self, guest_id: int) -> list[Booking]:
+        return self.__booking_access.get_bookings_by_guest(guest_id)
+    
+    
+    
+
+    
 

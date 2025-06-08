@@ -1,9 +1,10 @@
 import os
 import sqlite3
-from datetime import date
+from datetime import datetime, date
 
 from dataAccess.baseDataAccess import BaseDataAccess
 from model.Booking import Booking
+from model.Guest import Guest
 
 class BookingAccess(BaseDataAccess):
 
@@ -97,4 +98,21 @@ class BookingAccess(BaseDataAccess):
     def get_all_bookings(self):
         query = "SELECT * FROM Booking"
         return self.fetchall(query)
+    
+    # Um später als Gast eine Rechunung für seine Buchung zu erhalten.
+    def get_bookings_by_guest(self, guest_id: int) -> list[Booking]:
+        query = """
+        SELECT booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount
+        FROM Booking
+        WHERE guest_id = ?
+        """
+        params = (guest_id,)
+        results = self.fetchall(query, params)
+        bookings = []
+
+        for row in results:
+            booking_id, guest_id, room_id, check_in_date, check_out_date, is_cancelled, total_amount = row
+            booking = Booking(booking_id, guest_id, room_id, check_in_date, check_out_date, bool(is_cancelled), total_amount)
+            bookings.append(booking)
+        return bookings
     
