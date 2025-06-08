@@ -39,15 +39,8 @@ class RoomManager:
         )
         return available_rooms if available_rooms else []
 
-    def get_normal_price_per_night(self, room_id: int):
-        query = "SELECT price_per_night FROM Room WHERE room_id = ?"
-        row = self.room_access.fetchone(query, (room_id,))
-        if row:
-            return row['price_per_night']
-        return None
-
     def calculate_dynamic_room_price(self, room_id: int, check_in_date_str: str, check_out_date_str: str):
-        base_price = self.get_normal_price_per_night(room_id)
+        base_price = self.room_access.get_normal_price_per_night(room_id)
         if base_price is None:
             return None 
 
