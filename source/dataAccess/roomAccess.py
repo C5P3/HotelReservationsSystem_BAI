@@ -18,24 +18,24 @@ class RoomAccess(BaseDataAccess):
         return True
 
     def update_room(self, room_id, room_number=None, hotel_id=None, type_id=None, price_per_night=None):
-        fields = []
+        updates = []
         params = []
         if room_number is not None:
-            fields.append("room_number = ?")
+            updates.append("room_number = ?")
             params.append(room_number)
         if hotel_id is not None:
-            fields.append("hotel_id = ?")
+            updates.append("hotel_id = ?")
             params.append(hotel_id)
         if type_id is not None:
-            fields.append("type_id = ?")
+            updates.append("type_id = ?")
             params.append(type_id)
         if price_per_night is not None:
-            fields.append("price_per_night = ?")
+            updates.append("price_per_night = ?")
             params.append(price_per_night)
-        if not fields:
+        if not updates:
             return False 
         params.append(room_id)
-        query = f"UPDATE Room SET {', '.join(fields)} WHERE room_id = ?"
+        query = f"UPDATE Room SET {', '.join(updates)} WHERE room_id = ?"
         self.execute(query, tuple(params))
         return True
 
