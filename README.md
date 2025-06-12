@@ -1,5 +1,25 @@
 # HotelReservationsSystem_BAI
 
+# Beteiligte am Projekt
+
+- Elia Geromin
+- Felipe Wüthrich
+
+
+# Aufteilung der Aufgaben und Zeitplan
+
+https://github.com/users/C5P3/projects/1/views/1
+
+
+# Wichtiger Hinweis
+
+Wir (Elia und Felipe) haben uns am 21.05.2025 dazu entschieden, unsere bisherige Gruppe zu verlassen. Grund dafür war, dass wir mit der Komplexität und der Vorgehensweise des ursprünglichen Projekts überfordert waren. Dadurch fiel es uns schwer, inhaltlich und fachlich mit dem Rest der Gruppe mitzuhalten und eigene Ideen einzubringen.
+
+Nach intensiven Gesprächen und auf Anraten von Phillip Gachnang haben wir uns entschieden, ein eigenes Projekt in unserem Tempo umzusetzen – mit dem Ziel, den grösstmöglichen Lerneffekt für uns zu erzielen.
+
+
+# Projektstruktur
+
 Das Projekt ist ein Hotelreservierungssystem, das die Verwaltung von Hotels, Zimmern, Buchungen, Gästen und Rechnungen ermöglicht. Es ist modular aufgebaut und folgt dem MVC-Architekturprinzip (Model-View-Controller). Die Hauptbestandteile des Projekts sind:
 1.	Model: Definiert die Datenstrukturen und -modelle.
 2.	Business Logic: Enthält die Geschäftslogik, die die Interaktion zwischen den Datenmodellen und der Datenzugriffsschicht steuert.
