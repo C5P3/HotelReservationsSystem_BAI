@@ -41,6 +41,6 @@ class Room:
             if self._hotel is not None:
                 self._hotel.remove_room(self)
             self._hotel = hotel
-            # TODO: Add comment here why we check for None (if we not actually delete the artist)
+
             if hotel is not None and self not in hotel.rooms:
                 hotel.add_album(self)

@@ -23,7 +23,7 @@ class RoomManager:
     def delete_room(self, room_id: int):
         return self.room_access.delete_room(room_id)
 
-    def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
+    def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, hotel_name: str, city: str = None, room_type_description: str = None, num_guests: int = None):
         if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
             return []
 
@@ -34,6 +34,7 @@ class RoomManager:
             check_in_date = check_in_date,
             check_out_date = check_out_date,
             city = city,
+            hotel_name = hotel_name,
             room_type_description = room_type_description,
             max_guests = num_guests
         )
