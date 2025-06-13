@@ -40,7 +40,9 @@ class Hotel:
         return tuple(self._rooms)
 
     def add_room(self, room: Room):
-        # TODO: check if room is not None and room is of instance Room
+        if room is None or not isinstance(room, Room):
+            raise ValueError("Ungültiges Zimmerobjekt.")
+    
         if room not in self._rooms:
             self._rooms.append(room)
             room.hotel = self
