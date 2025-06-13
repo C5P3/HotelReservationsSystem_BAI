@@ -162,7 +162,7 @@ class RoomAccess(BaseDataAccess):
         for row in rows:
             hotel = Hotel(row["hotel_name"], row["hotel_stars"], row["hotel_city"])
             room_type = RoomType(row["type_id"], row["room_type_description"], row["max_guests"])
-            room = Room(row["room_id"], row["room_number"], row["price_per_night"], room_type, hotel)
+            room = Room(room_id=row["room_id"], hotel=hotel, room_number=row["room_number"], type_id=room_type.type_id, price_per_night=row["price_per_night"])
             rooms.append(room)
 
         return rooms
