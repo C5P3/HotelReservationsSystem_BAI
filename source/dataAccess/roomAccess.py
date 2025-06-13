@@ -53,7 +53,7 @@ class RoomAccess(BaseDataAccess):
     
     def get_normal_price_per_night(self, room_id: int):
         query = "SELECT price_per_night FROM Room WHERE room_id = ?"
-        row = self.room_access.fetchone(query, (room_id,))
+        row = self.fetchone(query, (room_id,))
         if row:
             return row['price_per_night']
         return None
