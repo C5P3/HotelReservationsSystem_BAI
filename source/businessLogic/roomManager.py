@@ -25,12 +25,28 @@ class RoomManager:
 
     def find_available_rooms_for_guest(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
         if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
+            return False
+
+        if check_out_date <= check_in_date:
+            return False
+
+        available_rooms = self.room_access.find_available_rooms(
+            check_in_date = check_in_date,
+            check_out_date = check_out_date,
+            city = city,
+            room_type_description = room_type_description,
+            max_guests = num_guests
+        )
+        return available_rooms
+    
+    def find_available_rooms_for_guest_for_booking(self, check_in_date: date, check_out_date: date, city: str = None, room_type_description: str = None, num_guests: int = None):
+        if not isinstance(check_in_date, date) or not isinstance(check_out_date, date):
             return []
 
         if check_out_date <= check_in_date:
             return []
 
-        available_rooms = self.room_access.find_available_rooms(
+        available_rooms = self.room_access.find_available_rooms_for_booking(
             check_in_date = check_in_date,
             check_out_date = check_out_date,
             city = city,

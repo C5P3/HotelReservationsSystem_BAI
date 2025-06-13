@@ -132,8 +132,55 @@ class RoomAccess(BaseDataAccess):
         query = """
             SELECT R.room_id, R.room_number, R.price_per_night,
                    RT.type_id, RT.description AS room_type_description, RT.max_guests,
-                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city,
-                   A.street, A.zip_code, A.address_id
+                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city
+            FROM Room R
+            JOIN Room_Type RT ON R.type_id = RT.type_id
+            JOIN Hotel H ON R.hotel_id = H.hotel_id
+            JOIN Address A ON H.address_id = A.address_id
+            WHERE R.room_id NOT IN (
+                SELECT B.room_id
+                FROM Booking B
+                WHERE B.is_cancelled = 0
+                  AND (B.check_in_date < ? AND B.check_out_date > ?)
+            )
+        """
+        params = [check_out_date, check_in_date]
+
+        if city:
+            query += " AND A.city = ?"
+            params.append(city)
+        if room_type_description:
+            query += " AND RT.description = ?"
+            params.append(room_type_description)
+        if max_guests:
+            query += " AND RT.max_guests >= ?"
+            params.append(max_guests)
+
+        rows = self.fetchall(query, tuple(params))
+        return [
+            {
+                "room_id": row["room_id"],
+                "room_number": row["room_number"],
+                "price_per_night": row["price_per_night"],
+                "room_type": {
+                    "type_id": row["type_id"],
+                    "description": row["room_type_description"],
+                    "max_guests": row["max_guests"]
+                },
+                "hotel": {
+                    "name": row["hotel_name"],
+                    "stars": row["hotel_stars"],
+                    "city": row["hotel_city"]
+                }
+            }
+            for row in rows
+        ]
+
+    def find_available_rooms_for_booking(self, check_in_date, check_out_date, city=None, room_type_description=None, max_guests=None):
+        query = """
+            SELECT R.room_id, R.room_number, R.price_per_night,
+                   RT.type_id, RT.description AS room_type_description, RT.max_guests,
+                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city
             FROM Room R
             JOIN Room_Type RT ON R.type_id = RT.type_id
             JOIN Hotel H ON R.hotel_id = H.hotel_id
@@ -161,18 +208,16 @@ class RoomAccess(BaseDataAccess):
         
         rooms = []
         for row in rows:
-            address = Address(address_id=row["address_id"], city=row["hotel_city"], street=row["street"], zip_code=row["zip_code"])  
-            hotel = Hotel(row["hotel_name"], row["hotel_stars"], address)
+            hotel = Hotel(row["hotel_name"], row["hotel_stars"], row["hotel_city"])
             room_type = RoomType(row["type_id"], row["room_type_description"], row["max_guests"])
-            room = Room(
-                room_id=row["room_id"],
-                hotel=hotel,
-                room_number=row["room_number"],
-                type_id=room_type.type_id,
-                price_per_night=row["price_per_night"]
-            )
+            room = Room(room_id=row["room_id"], hotel=hotel, room_number=row["room_number"], type_id=room_type.type_id, price_per_night=row["price_per_night"])
             rooms.append(room)
+
         return rooms
     
     
-   
+
+
+
+
+
