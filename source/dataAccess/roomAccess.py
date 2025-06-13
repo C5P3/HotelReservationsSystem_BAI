@@ -132,7 +132,8 @@ class RoomAccess(BaseDataAccess):
         query = """
             SELECT R.room_id, R.room_number, R.price_per_night,
                    RT.type_id, RT.description AS room_type_description, RT.max_guests,
-                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city
+                   H.name AS hotel_name, H.stars AS hotel_stars, A.city AS hotel_city,
+                   A.street, A.zip_code, A.address_id
             FROM Room R
             JOIN Room_Type RT ON R.type_id = RT.type_id
             JOIN Hotel H ON R.hotel_id = H.hotel_id
@@ -160,7 +161,7 @@ class RoomAccess(BaseDataAccess):
         
         rooms = []
         for row in rows:
-            address = Address(city=row["hotel_city"], street=row["street"], zip_code=row["zip_code"])  
+            address = Address(address_id=row["address_id"], city=row["hotel_city"], street=row["street"], zip_code=row["zip_code"])  
             hotel = Hotel(row["hotel_name"], row["hotel_stars"], address)
             room_type = RoomType(row["type_id"], row["room_type_description"], row["max_guests"])
             room = Room(
