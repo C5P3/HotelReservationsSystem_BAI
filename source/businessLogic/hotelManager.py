@@ -21,9 +21,6 @@ class HotelManager:
     
     def search_hotels_by_city_and_max_guests(self, city: str, max_guests: int) -> list[Hotel]:
         return self.__hotel_access.get_hotel_by_city_and_max_guests(city, max_guests)
-    
-    def search_hotels_by_combinations(self, city: str, stars: int, max_guests: int, check_in_date: str, check_out_date: str) -> list[Hotel]:
-        return self.__hotel_access.get_hotel_by_combinations(city, stars, max_guests, check_in_date, check_out_date)
 
     def search_hotel_information(self) -> list[Hotel]:
         return self.__hotel_access.get_hotel_information()
